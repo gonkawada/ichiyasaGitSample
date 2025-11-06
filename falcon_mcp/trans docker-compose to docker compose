@@ -1,0 +1,66 @@
+現在の推奨は「docker compose」（スペース区切り）のサブコマンドですが、古い「docker-compose」（ハイフン区切り）が使える環境では新しいCompose V2がインストールされていない可能性があります。V2対応にアップグレード・修正する手順は以下の通りです。[1][2][3][4]
+
+### 手順：docker composeコマンドを有効化
+
+1. **古いdocker-composeのアンインストール（非推奨部分の削除）**
+   ```
+   sudo apt-get remove docker-compose
+   ```
+
+2. **Docker公式リポジトリの公開鍵とリポジトリ登録**
+   ```
+   sudo apt-get update
+   sudo apt-get install ca-certificates curl
+   sudo install -m 0755 -d /etc/apt/keyrings
+   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+   sudo chmod a+r /etc/apt/keyrings/docker.asc
+   echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   sudo apt-get update
+   ```
+
+3. **新しいDockerとComposeプラグインのインストール**
+   ```
+   sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+   ```
+   - 「docker compose」コマンドはこのプラグインで有効化されます。[3][4]
+
+4. **バージョン確認**
+   ```
+   docker compose version
+   ```
+   - これで`Docker Compose version v2.xx.xx`が表示されればOKです。[3]
+
+5. **（必要なら）ユーザをdockerグループに追加して再ログイン**
+   ```
+   sudo usermod -aG docker $USER
+   # 変更反映のため一度ログアウト後に再ログイン
+   ```
+
+### 解説
+
+- 旧式の「docker-compose」はPython製CLIツールですが、現在は非推奨で将来的なサポート終了が予告されています。[2][5]
+- 新しい「docker compose」はDocker CLIに統合された公式サブコマンド（Go製、Compose V2）で、高い互換性と保守性を持ちます。[6][1]
+- Ubuntuの公式パッケージよりも、Dockerの公式リポジトリから最新版を取得するのが安全です。[4][3]
+
+この作業で、今後は「docker compose up」等の新しい形式が利用できるようになりますなります。[5][13][9]
+
+[1](https://tech.anycloud.co.jp/articles/docker-compose-v1-vs-v2/)
+[2](https://tech.anycloud.co.jp/articles/docker-compose-v1-vs-v2)
+[3](https://qiita.com/nouernet/items/7dfb11cd8c3c929821b1)
+[4](https://2025-spring-1st-seminar-1-c3d5d1.gitlab.io/environment_setup/)
+[5](https://zenn.dev/norihashimo/articles/11b0f487ad6c0d)
+[6](https://qiita.com/urabexon/items/194ca4d60735cb6df5c9)
+[7](https://qiita.com/mayobimu/items/14d18a354497e830cd55)
+[8](https://www.seeds-std.co.jp/blog/creators/2023-06-21-183202/)
+[9](https://www.konosumi.net/entry/2023/02/26/142508)
+[10](https://www.maigo-name.tokyo/entry/2021/07/24/231528)
+[11](https://www.bnote.net/ubuntu/docker.html)
+[12](https://www.docker.com/ja-jp/blog/new-docker-compose-v2-and-v1-deprecation/)
+[13](https://qiita.com/kotobuki5991/items/e2af78c11b4571f904e5)
+[14](https://takashikono.hatenadiary.jp/entry/2025/02/01/135213)
+[15](https://www.kagoya.jp/howto/cloud/container/dockercompose/)
+[16](https://www.hostinger.com/jp/tutorials/how-to-install-docker-on-ubuntu/)
+[17](https://zenn.dev/skanehira/articles/2021-06-03-new-docker-compose)
+[18](https://www.memotansu.jp/docker/500/)
+[19](https://qiita.com/mai_llj/items/a91bb375af68a1c88469)
+[20](https://engineer-ninaritai.com/what-docker-compose/)
